@@ -14,7 +14,7 @@ import {
   draggedItemRotationAtom,
   shopModeAtom,
 } from "./UI";
-export const Experience = () => {
+export const Experience = ({ onFrameClick }) => {
   const [buildMode, setBuildMode] = useAtom(buildModeAtom);
   const [shopMode, setShopMode] = useAtom(shopModeAtom);
   const [characters] = useAtom(charactersAtom);
@@ -165,8 +165,8 @@ export const Experience = () => {
         ...item,
         gridPosition: [0, 0],
         tmp: true,
-        link :"https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/640px-Flag_of_India.svg.png",
-        by : localStorage.getItem("id"),
+        link: "https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/640px-Flag_of_India.svg.png",
+        by: localStorage.getItem("id"),
       },
     ]);
     setDraggedItem(items.length);
@@ -207,13 +207,18 @@ export const Experience = () => {
             item={item}
             onClick={(e) => {
               if (buildMode) {
-                setDraggedItem((prev) => (prev === null ? idx : prev));
-                setDraggedItemRotation(item.rotation || 0);
+                if (item.by == localStorage.getItem("id")) {
+                  setDraggedItem((prev) => (prev === null ? idx : prev));
+                  setDraggedItemRotation(item.rotation || 0);
+                } else {
+                  alert("not allowed");
+                }
+              } else {
+                if (item.name == "frame") {
+                  console.log("hello");
+                  onFrameClick(item.link);
+                }
               }
-              if(item.name=="frame"){
-                console.log("hello")
-              }
-              e.stopPropagation()
             }}
             isDragging={draggedItem === idx}
             dragPosition={dragPosition}

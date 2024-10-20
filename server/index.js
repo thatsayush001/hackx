@@ -286,7 +286,7 @@ const items = {
 };
 
 const map = {
-  size: [15, 15],
+  size: [20, 20],
   gridDivision: 2,
   items: [
     {
