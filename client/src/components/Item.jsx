@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
 import { SkeletonUtils } from "three-stdlib";
 import { useGrid } from "../hooks/useGrid";
+import { Frame } from "./Frame";
 import { mapAtom } from "./SocketManager";
 import { buildModeAtom } from "./UI";
 
@@ -14,7 +15,7 @@ export const Item = ({
   canDrop,
   dragRotation,
 }) => {
-  const { name, gridPosition, size, rotation: itemRotation } = item;
+  const { name, gridPosition, size, rotation: itemRotation ,link} = item;
 
   const rotation = isDragging ? dragRotation : itemRotation;
   const { gridToVector3 } = useGrid();
@@ -48,7 +49,9 @@ export const Item = ({
       onPointerEnter={() => setHover(true)}
       onPointerLeave={() => setHover(false)}
     >
-      <primitive object={clone} rotation-y={((rotation || 0) * Math.PI) / 2} />
+      {/* <primitive object={clone} rotation-y={((rotation || 0) * Math.PI) / 2} /> */}
+      {name=="frame" ? <Frame imgLink={link} rotation={rotation}/>:<primitive object={clone} rotation-y={((rotation || 0) * Math.PI) / 2} />}
+        
       {isDragging && (
         <mesh>
           <boxGeometry

@@ -26,6 +26,7 @@ export const SocketManager = () => {
       setUser(value.id);
       setItems(value.items);
       setCharacters(value.characters);
+      localStorage.setItem("id",value.id);
     }
 
     function onCharacters(value) {

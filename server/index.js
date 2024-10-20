@@ -11,9 +11,14 @@ io.listen(3001);
 const characters = [];
 
 const items = {
+  frame: {
+    name: "frame",
+    size: [1,4],
+  },
   washer: {
     name: "washer",
     size: [2, 2],
+    drag : false
   },
   toiletSquare: {
     name: "toiletSquare",
@@ -273,141 +278,146 @@ const items = {
 };
 
 const map = {
-  size: [10, 10],
+  size: [15, 15],
   gridDivision: 2,
   items: [
     {
-      ...items.showerRound,
-      gridPosition: [0, 0],
+      ...items.frame,
+      gridPosition: [10,10],
+      link : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlZXv6MFianbyxJhMpVZr-mOF5cEhS0ViNew&s"
     },
-    {
-      ...items.toiletSquare,
-      gridPosition: [0, 3],
-      rotation: 1,
-    },
-    {
-      ...items.washer,
-      gridPosition: [5, 0],
-    },
-    {
-      ...items.bathroomSink,
-      gridPosition: [7, 0],
-    },
-    {
-      ...items.trashcan,
-      gridPosition: [0, 5],
-      rotation: 1,
-    },
-    {
-      ...items.bathroomCabinetDrawer,
-      gridPosition: [3, 0],
-    },
-    {
-      ...items.bathtub,
-      gridPosition: [4, 4],
-    },
-    {
-      ...items.bathtub,
-      gridPosition: [0, 8],
-      rotation: 3,
-    },
-    {
-      ...items.bathroomCabinet,
-      gridPosition: [3, 0],
-    },
-    {
-      ...items.bathroomMirror,
-      gridPosition: [0, 8],
-      rotation: 1,
-    },
-    {
-      ...items.bathroomMirror,
-      gridPosition: [, 10],
-      rotation: 1,
-    },
-    {
-      ...items.tableCoffee,
-      gridPosition: [10, 8],
-    },
-    {
-      ...items.rugRectangle,
-      gridPosition: [8, 7],
-    },
-    {
-      ...items.loungeSofaCorner,
-      gridPosition: [6, 10],
-    },
-    {
-      ...items.bear,
-      gridPosition: [0, 3],
-      rotation: 1,
-    },
-    {
-      ...items.plant,
-      gridPosition: [11, 13],
-    },
-    {
-      ...items.cabinetBedDrawerTable,
-      gridPosition: [13, 19],
-    },
-    {
-      ...items.cabinetBedDrawer,
-      gridPosition: [19, 19],
-    },
-    {
-      ...items.bedDouble,
-      gridPosition: [14, 15],
-    },
-    {
-      ...items.bookcaseClosedWide,
-      gridPosition: [12, 0],
-      rotation: 2,
-    },
-    {
-      ...items.speaker,
-      gridPosition: [11, 0],
-    },
-    {
-      ...items.speakerSmall,
-      gridPosition: [15, 0],
-    },
-    {
-      ...items.loungeChair,
-      gridPosition: [10, 4],
-    },
-    {
-      ...items.loungeSofaOttoman,
-      gridPosition: [14, 4],
-    },
-    {
-      ...items.loungeDesignSofa,
-      gridPosition: [18, 0],
-      rotation: 1,
-    },
-    {
-      ...items.kitchenCabinetCornerRound,
-      gridPosition: [2, 18],
-      rotation: 2,
-    },
-    {
-      ...items.kitchenCabinetCornerInner,
-      gridPosition: [0, 18],
-      rotation: 2,
-    },
-    {
-      ...items.kitchenStove,
-      gridPosition: [0, 16],
-      rotation: 1,
-    },
-    {
-      ...items.dryer,
-      gridPosition: [0, 14],
-      rotation: 1,
-    },
-    {
-      ...items.lampRoundFloor,
-      gridPosition: [0, 12],
-    },
+    // {
+    //   ...items.showerRound,
+    //   gridPosition: [0, 0],
+    // },
+    // {
+    //   ...items.toiletSquare,
+    //   gridPosition: [0, 3],
+    //   rotation: 1,
+    // },
+    // {
+    //   ...items.washer,
+    //   gridPosition: [5, 0],
+    // },
+    // {
+    //   ...items.bathroomSink,
+    //   gridPosition: [7, 0],
+    // },
+    // {
+    //   ...items.trashcan,
+    //   gridPosition: [0, 5],
+    //   rotation: 1,
+    // },
+    // {
+    //   ...items.bathroomCabinetDrawer,
+    //   gridPosition: [3, 0],
+    // },
+    // {
+    //   ...items.bathtub,
+    //   gridPosition: [4, 4],
+    // },
+    // {
+    //   ...items.bathtub,
+    //   gridPosition: [0, 8],
+    //   rotation: 3,
+    // },
+    // {
+    //   ...items.bathroomCabinet,
+    //   gridPosition: [3, 0],
+    // },
+    // {
+    //   ...items.bathroomMirror,
+    //   gridPosition: [0, 8],
+    //   rotation: 1,
+    // },
+    // {
+    //   ...items.bathroomMirror,
+    //   gridPosition: [, 10],
+    //   rotation: 1,
+    // },
+    // {
+    //   ...items.tableCoffee,
+    //   gridPosition: [10, 8],
+    // },
+    // {
+    //   ...items.rugRectangle,
+    //   gridPosition: [8, 7],
+    // },
+    // {
+    //   ...items.loungeSofaCorner,
+    //   gridPosition: [6, 10],
+    // },
+    // {
+    //   ...items.bear,
+    //   gridPosition: [0, 3],
+    //   rotation: 1,
+    // },
+    // {
+    //   ...items.plant,
+    //   gridPosition: [11, 13],
+    // },
+    // {
+    //   ...items.cabinetBedDrawerTable,
+    //   gridPosition: [13, 19],
+    // },
+    // {
+    //   ...items.cabinetBedDrawer,
+    //   gridPosition: [19, 19],
+    // },
+    // {
+    //   ...items.bedDouble,
+    //   gridPosition: [14, 15],
+    // },
+    // {
+    //   ...items.bookcaseClosedWide,
+    //   gridPosition: [12, 0],
+    //   rotation: 2,
+    // },
+    // {
+    //   ...items.speaker,
+    //   gridPosition: [11, 0],
+    // },
+    // {
+    //   ...items.speakerSmall,
+    //   gridPosition: [15, 0],
+    // },
+    // {
+    //   ...items.loungeChair,
+    //   gridPosition: [10, 4],
+    // },
+    // {
+    //   ...items.loungeSofaOttoman,
+    //   gridPosition: [14, 4],
+    // },
+    // {
+    //   ...items.loungeDesignSofa,
+    //   gridPosition: [18, 0],
+    //   rotation: 1,
+    // },
+    // {
+    //   ...items.kitchenCabinetCornerRound,
+    //   gridPosition: [2, 18],
+    //   rotation: 2,
+    // },
+    // {
+    //   ...items.kitchenCabinetCornerInner,
+    //   gridPosition: [0, 18],
+    //   rotation: 2,
+    // },
+    // {
+    //   ...items.kitchenStove,
+    //   gridPosition: [0, 16],
+    //   rotation: 1,
+    // },
+    // {
+    //   ...items.dryer,
+    //   gridPosition: [0, 14],
+    //   rotation: 1,
+    // },
+    // {
+    //   ...items.lampRoundFloor,
+    //   gridPosition: [0, 12],
+    // },
   ],
 };
 

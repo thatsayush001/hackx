@@ -10,7 +10,7 @@ function App() {
   return (
     <>
       <SocketManager />
-      <Canvas shadows camera={{ position: [20,5,20], fov: 50 }}>
+      <Canvas shadows camera={{ position: [0,5,0], fov: 50 }}>
         <color attach="background" args={["#ececec"]} />
         <ScrollControls pages={shopMode ? 4 : 0}>
           <Experience />

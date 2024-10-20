@@ -116,7 +116,7 @@ export function Avatar({
       // state.camera.position.y = group.current.position.y + 8;
       // state.camera.position.z = group.current.position.z + 8;
       // state.camera.lookAt(group.current.position);
-      state.camera.lookAt(new Vector3(5,2,5));
+      state.camera.lookAt(new Vector3(7.5,2,7.5));
     }
   });
 
