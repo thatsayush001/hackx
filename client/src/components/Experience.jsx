@@ -167,7 +167,6 @@ export const Experience = () => {
         tmp: true,
         link :"https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/640px-Flag_of_India.svg.png",
         by : localStorage.getItem("id"),
-        inserted : false
       },
     ]);
     setDraggedItem(items.length);

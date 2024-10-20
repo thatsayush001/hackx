@@ -1,8 +1,8 @@
 import { atom, useAtom } from "jotai";
 import { useState } from "react";
 import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
-import { socket } from "./SocketManager";
-import { Modal, Button } from "antd"; // Import Ant Design Modal and Button
+import { socket,mapAtom } from "./SocketManager";
+import { Modal, Button ,Input} from "antd"; // Import Ant Design Modal and Button
 
 // Atoms
 export const buildModeAtom = atom(false);
@@ -11,6 +11,8 @@ export const draggedItemAtom = atom(null);
 export const draggedItemRotationAtom = atom(0);
 
 export const UI = () => {
+  const [map] = useAtom(mapAtom);
+  const [inputLink, setInputLink] = useState(""); // State for storing the input link
   const [buildMode, setBuildMode] = useAtom(buildModeAtom);
   const [shopMode, setShopMode] = useAtom(shopModeAtom);
   const [draggedItem, setDraggedItem] = useAtom(draggedItemAtom);
@@ -34,6 +36,27 @@ export const UI = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+  const handleSubmit = () => {
+    const newItem = {
+      name: "frame",
+    size: [1,4],
+      gridPosition: [0, 0],
+      tmp: true,
+      link: inputLink,
+      by: localStorage.getItem("id"),
+    };
+    const temp = map.items
+    temp.push(newItem);
+    // Emit updated items to the server
+    console.log(temp);
+    socket.emit("itemsUpdate", temp);
+
+    // Close the modal
+    setIsModalVisible(false);
+  };
+  const handleInputChange = (e) => {
+    setInputLink(e.target.value);
+  };
 
   return (
     <>
@@ -51,14 +74,24 @@ export const UI = () => {
 
 
       {/* Ant Design Modal */}
-      <Modal title="Hello" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <p>Hello, welcome to the modal!</p>
+      <Modal
+        title="Enter Link"
+        open={isModalVisible}
+        onOk={handleSubmit} // Trigger handleSubmit on Ok
+        onCancel={handleCancel}
+      >
+        <p>Enter a link to be added to the items list:</p>
+        <Input
+          placeholder="Enter link"
+          value={inputLink}
+          onChange={handleInputChange}
+        />
+        <Button type="primary" onClick={handleSubmit} className="mt-4">
+          Submit
+        </Button>
       </Modal>
-
       <div className="fixed inset-4 flex items-end justify-center pointer-events-none">
         <div className="flex items-center space-x-4 pointer-events-auto">
-          {/* BACK Button */}
-          {/* Button to trigger Ant Design modal */}
           <button
               className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
               onClick={() => {
@@ -76,7 +109,7 @@ export const UI = () => {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                  d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.436 3h13.127a1.5 1.5 0 011.118.44l2.08 1.189a3.004 3.004 0 01-.621 4.72"
                 />
               </svg>
             </button>
@@ -170,7 +203,7 @@ export const UI = () => {
             </button>
           )}
           {/* SHOP Button */}
-          {buildMode && !shopMode && draggedItem === null && (
+          {/* {buildMode && !shopMode && draggedItem === null && (
             <button
               className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
               onClick={() => setShopMode(true)}
@@ -190,7 +223,7 @@ export const UI = () => {
                 />
               </svg>
             </button>
-          )}
+          )} */}
         </div>
       </div>
     </>
