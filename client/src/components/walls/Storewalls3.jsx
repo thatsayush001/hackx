@@ -2,7 +2,7 @@ import { useTexture } from "@react-three/drei";
 import React from "react";
 import * as THREE from "three";
 
-const StoreWalls = () => {
+const StoreWalls3 = () => {
   const map = useTexture("./textures/store_walls/beige_wall_001_diff_1k.png");
   const displacementMap = useTexture(
     "./textures/store_walls/beige_wall_001_disp_1k.png"
@@ -28,7 +28,12 @@ const StoreWalls = () => {
 
   return (
     <>
-      <mesh position={[7.5, 1.2,-0.2]} scale={[1,0.8,1]} receiveShadow>
+      <mesh
+        position={[-0.2, 1.2, 7.5]}
+        scale={[1, 0.8, 1]}
+        rotation={[0, Math.PI / 2, 0]}
+        receiveShadow
+      >
         <planeGeometry args={[15, 3]} />
         <meshStandardMaterial
           map={map}
@@ -42,4 +47,4 @@ const StoreWalls = () => {
   );
 };
 
-export default StoreWalls;
+export default StoreWalls3;

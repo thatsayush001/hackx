@@ -207,12 +207,8 @@ export const Experience = () => {
             item={item}
             onClick={(e) => {
               if (buildMode) {
-                if(item.by==localStorage.getItem("id")){
-                  setDraggedItem((prev) => (prev === null ? idx : prev));
-                  setDraggedItemRotation(item.rotation || 0);
-                }else{
-                  alert("not allowed");
-                }
+                setDraggedItem((prev) => (prev === null ? idx : prev));
+                setDraggedItemRotation(item.rotation || 0);
               }
               if(item.name=="frame"){
                 console.log("hello")
