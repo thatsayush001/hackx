@@ -17,6 +17,7 @@
     "autoprefixer": "^10.4.15",
     "jotai": "^2.2.3",
     "postcss": "^8.4.28",
+    "r3f-vite-starter": "file:",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.27.0",
