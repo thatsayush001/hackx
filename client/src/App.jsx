@@ -5,6 +5,7 @@ import { Experience } from "./components/Experience";
 import Navbar from "./components/Navbar";
 import { SocketManager } from "./components/SocketManager";
 import { UI, shopModeAtom } from "./components/UI";
+import StoreWalls from "./components/walls/Storewalls";
 
 function App() {
   const [shopMode] = useAtom(shopModeAtom);
@@ -13,6 +14,7 @@ function App() {
     <Navbar/>
       <SocketManager />
       <Canvas shadows camera={{ position: [0,5,0], fov: 50 }}>
+      <StoreWalls/>
         <color attach="background" args={["#ececec"]} />
         <ScrollControls pages={shopMode ? 4 : 0}>
           <Experience />

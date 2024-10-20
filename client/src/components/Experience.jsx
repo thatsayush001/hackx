@@ -205,7 +205,7 @@ export const Experience = () => {
           <Item
             key={`${item.name}-${idx}`}
             item={item}
-            onClick={() => {
+            onClick={(e) => {
               if (buildMode) {
                 if(item.by==localStorage.getItem("id")){
                   setDraggedItem((prev) => (prev === null ? idx : prev));
@@ -217,6 +217,7 @@ export const Experience = () => {
               if(item.name=="frame"){
                 console.log("hello")
               }
+              e.stopPropagation()
             }}
             isDragging={draggedItem === idx}
             dragPosition={dragPosition}
