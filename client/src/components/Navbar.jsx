@@ -43,10 +43,11 @@ const Navbar = () => {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
+      localStorage.setItem("id",address);
       setAccount(address); // Set the connected account
 
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
-
+      localStorage.setItem("contract", JSON.stringify(contract));
       setState({ provider, signer, contract, address });
     } catch (error) {
       console.error('Error connecting to Metamask:', error);
