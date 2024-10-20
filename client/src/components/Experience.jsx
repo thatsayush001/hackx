@@ -14,7 +14,7 @@ import {
   draggedItemRotationAtom,
   shopModeAtom,
 } from "./UI";
-export const Experience = () => {
+export const Experience = ({onFrameClick}) => {
   const [buildMode, setBuildMode] = useAtom(buildModeAtom);
   const [shopMode, setShopMode] = useAtom(shopModeAtom);
   const [characters] = useAtom(charactersAtom);
@@ -214,8 +214,11 @@ export const Experience = () => {
                   alert("not allowed");
                 }
               }
-              if(item.name=="frame"){
-                console.log("hello")
+              else{
+                if(item.name=="frame"){
+                  console.log("hello")
+                  onFrameClick(item.link )
+                }
               }
               e.stopPropagation()
             }}
