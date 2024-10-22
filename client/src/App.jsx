@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { useState } from "react";
 import { Experience } from "./components/Experience";
 import Navbar from "./components/Navbar";
-import { SocketManager, socket } from "./components/SocketManager";
+import { SocketManager, socket, mapAtom } from "./components/SocketManager";
 import { UI, shopModeAtom } from "./components/UI";
 import StoreWalls from "./components/walls/Storewalls";
 import StoreWalls2 from "./components/walls/Storewalls2";
@@ -13,21 +13,23 @@ import StoreWalls3 from "./components/walls/Storewalls3";
 import StoreWalls4 from "./components/walls/Storewalls4";
 import { ethers, parseEther } from "ethers";
 import abi from "./abi/NFTGallery.json"; // Make sure to import the ABI
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [shopMode] = useAtom(shopModeAtom);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [id, setId] = useState("");
   const [price, setPrice] = useState("");
-  const [likes,setLikes] = useState(0)
+  const [likes, setLikes] = useState(0);
+
+  const [map] = useAtom(mapAtom);
 
   const showModal = (id, price, likes) => {
     setId(id);
     console.log(id);
     setPrice(price);
-    setLikes(likes)
+    setLikes(likes);
     setIsModalVisible(true);
   };
 
@@ -112,7 +114,14 @@ function App() {
       // Wait for the transaction to be confirmed
       await tx.wait();
 
+      toast.success("Bought Successfully!!");
       console.log("Bought Successfully!!");
+      let tempItem = map.items;
+
+      tempItem = tempItem.filter(
+        (item) => !(item.name === "frame" && item.id === id)
+      );
+      socket.emit("itemsUpdate", tempItem);
     } catch (error) {
       console.error("Error buying art:", error);
     }
@@ -123,7 +132,7 @@ function App() {
         value: ethers.parseEther(String(bid)),
       });
       await tx.wait();
-      console.log("Bid Successfully!!");
+      toast.success("Bid Successfully!!");
     } catch (error) {
       console.log(error);
     }
@@ -132,8 +141,17 @@ function App() {
     try {
       const tx = await state.contract.toggleAuction(id);
       await tx.wait();
-
+      let tempItem = map.items;
+      tempItem.map((item) => {
+        if (item.name === "frame" && item.id === id) {
+          console.log(item)
+          item.auctionActive = !item.auctionActive;
+          console.log(item)
+        }
+      });
+      socket.emit("itemsUpdate", tempItem);
       console.log("Auction Toggled");
+      toast.success("Auction Toggled");
     } catch (error) {}
   };
   const [bidders, setBidders] = useState([]);
@@ -173,19 +191,27 @@ function App() {
     try {
       const tx = await state.contract.likeArt(id);
       await tx.wait();
+      let tempItem = map.items;
+      tempItem.map((item) => {
+        if (item.name === "frame" && item.id === id) {
+          console.log(item)
+          item.likes = item.likes + 1;
+          setLikes(item.likes);
+        }
+      });
+      socket.emit("itemsUpdate", tempItem);
+      toast.success("Art liked successfully!");
       console.log("Art liked successfully!");
-  
+
       // Optionally, fetch the updated number of likes
     } catch (error) {
       console.error("Error liking art:", error);
     }
   };
-  
-  
 
   return (
     <>
-    <ToastContainer/>
+      <ToastContainer />
       <Navbar connectWallet={connectWallet} account={account} state={state} />
       <Modal
         title="Frame Modal"
@@ -237,30 +263,28 @@ function App() {
 
         {/* View Max Bid Button */}
         <button
-    className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 transition duration-300 mt-4 w-full"
-    onClick={() => handleGetMaxBid(id)}
-  >
-    {maxBid ? `Max Bid: ${maxBid} ETH` : "View Max Bid"}
-  </button>
-  <div className="mt-4 flex items-center space-x-2">
-    <button
-      className="flex items-center bg-pink-500 text-white font-bold py-2 px-4 rounded hover:bg-pink-700 transition duration-300"
-      onClick={() => handleLike(id)}
-    >
-      {/* Heart SVG */}
-      <svg
-        className="w-6 h-6 fill-current text-white mr-2"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-      >
-        <path
-          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-        />
-      </svg>
-      {/* Number of likes */}
-      <span>{likes}</span>
-    </button>
-  </div>
+          className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 transition duration-300 mt-4 w-full"
+          onClick={() => handleGetMaxBid(id)}
+        >
+          {maxBid ? `Max Bid: ${maxBid} ETH` : "View Max Bid"}
+        </button>
+        <div className="mt-4 flex items-center space-x-2">
+          <button
+            className="flex items-center bg-pink-500 text-white font-bold py-2 px-4 rounded hover:bg-pink-700 transition duration-300"
+            onClick={() => handleLike(id)}
+          >
+            {/* Heart SVG */}
+            <svg
+              className="w-6 h-6 fill-current text-white mr-2"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            {/* Number of likes */}
+            <span>{likes}</span>
+          </button>
+        </div>
 
         {/* Bidders Modal */}
         <Modal
