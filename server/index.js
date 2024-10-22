@@ -417,7 +417,7 @@ const items = {
 };
 
 const map = {
-  size: [20, 20],
+  size: [15, 15],
   gridDivision: 2,
   items: [
     {

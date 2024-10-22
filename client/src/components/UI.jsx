@@ -4,6 +4,8 @@ import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
 import { socket,mapAtom } from "./SocketManager";
 import { Modal, Button ,Input} from "antd"; // Import Ant Design Modal and Button
 import axios from "axios"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Atoms
 export const buildModeAtom = atom(false);
@@ -45,7 +47,8 @@ export const UI = ({state, account}) => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    
+    const vals = generateFramePos(map.items);
     try {
       // Prepare the data for IPFS upload
       const data = JSON.stringify({ title, price, img });
@@ -78,7 +81,7 @@ export const UI = ({state, account}) => {
       console.log("Transaction Success:", tx);
       const count = await contract.totalPosts();
       console.log("Total Posts:", count);
-      const tx2 = await contract.setCoordinates(Number(count),8,0,1)
+      const tx2 = await contract.setCoordinates(Number(count),vals.x,vals.y,vals.rotation)
       await tx2.wait()
       console.log("Transaction Success:", tx2);
       fetchArtPieces()
@@ -97,10 +100,10 @@ export const UI = ({state, account}) => {
       const newItem = {
         name: 'frame',
         size: [ 1, 4 ],
-        gridPosition: [ 15, 0 ],
+        gridPosition: [ vals.x, vals.y ],
         by: localStorage.getItem("address"),
         likes: 0,
-        rotation: 1,
+        rotation: vals.rotation,
         link: img,
         title: title,
         price: price,
@@ -119,13 +122,100 @@ export const UI = ({state, account}) => {
       socket.emit("itemsUpdate", temp);
   
       // Close the modal
+      toast.success("Successfully added new Art");
       setIsModalVisible(false);
   
     } catch (error) {
       console.error("Error during the submission process:", error);
-      window.alert("Minting error: " + error.message || "Unknown error occurred");
+      // window.alert("Minting error: " + error.message || "Unknown error occurred");
+      toast.error("Error during the submission process");
     }
   };
+
+  function generateFramePos(items) {
+    let ro0 = new Set([...Array(30).keys()]); // [0, 1, 2, ..., 29]
+    let ro1 = new Set([...Array(30).keys()]);
+    let ro2 = new Set([...Array(30).keys()]);
+    let ro3 = new Set([...Array(30).keys()]);
+  
+    // Function to find the first number of each group of 4 consecutive numbers
+  
+    items.map((item) => {
+      if (item.name == "frame") {
+        if (item.rotation == 0) {
+          ro0.delete(item.gridPosition[1]);
+          ro0.delete(item.gridPosition[1] + 1);
+          ro0.delete(item.gridPosition[1] + 2);
+          ro0.delete(item.gridPosition[1] + 3);
+        } else if (item.rotation == 1) {
+          ro1.delete(item.gridPosition[0]);
+          ro1.delete(item.gridPosition[0] + 1);
+          ro1.delete(item.gridPosition[0] + 2);
+          ro1.delete(item.gridPosition[0] + 3);
+        } else if (item.rotation == 2) {
+          ro2.delete(item.gridPosition[1]);
+          ro2.delete(item.gridPosition[1] + 1);
+          ro2.delete(item.gridPosition[1] + 2);
+          ro2.delete(item.gridPosition[1] + 3);
+        } else if (item.rotation == 3) {
+          ro3.delete(item.gridPosition[0]);
+          ro3.delete(item.gridPosition[0] + 1);
+          ro3.delete(item.gridPosition[0] + 2);
+          ro3.delete(item.gridPosition[0] + 3);
+        }
+      }
+    });
+  
+    // Find and store only the first number of consecutive groups of 4
+    ro0 = getFirstConsecutiveNumbers(ro0);
+    ro1 = getFirstConsecutiveNumbers(ro1);
+    ro2 = getFirstConsecutiveNumbers(ro2);
+    ro3 = getFirstConsecutiveNumbers(ro3);
+  
+    // Convert back to arrays if needed
+    ro0 = Array.from(ro0);
+    ro1 = Array.from(ro1);
+    ro2 = Array.from(ro2);
+    ro3 = Array.from(ro3);
+  
+    // console.log("ro0:", ro0);
+    // console.log("ro1:", ro1);
+    // console.log("ro2:", ro2);
+    // console.log("ro3:", ro3);
+    
+    if (ro0.length > 0) {
+      return { rotation: 0, x:0,y: getRandomNumber(ro0) }
+    } else if (ro1.length > 0) {
+      return { rotation: 1, y:15,x: getRandomNumber(ro1) }
+    } else if (ro2.length > 0) {
+      return { rotation: 2, x:15,y: getRandomNumber(ro2) }
+    } else if (ro3.length > 0) {
+      return { rotation: 3, y:0,x: getRandomNumber(ro3) }
+    } else {
+      alert("No empty space");
+      return { rotation: 0, x:0,y: 0 }; 
+    }
+  }
+  function getRandomNumber(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+  
+  function getFirstConsecutiveNumbers(set) {
+    const sortedArray = Array.from(set).sort((a, b) => a - b);
+    let firstNumbers = new Set();
+
+    for (let i = 0; i < sortedArray.length - 3; i++) {
+      if (
+        sortedArray[i + 1] === sortedArray[i] + 1 &&
+        sortedArray[i + 2] === sortedArray[i] + 2 &&
+        sortedArray[i + 3] === sortedArray[i] + 3
+      ) {
+        firstNumbers.add(sortedArray[i]);
+      }
+    }
+
+    return firstNumbers;
+  }
   
   const handleInputChange = (e) => {
     setInputLink(e.target.value);
@@ -187,6 +277,7 @@ export const UI = ({state, account}) => {
           className="fixed top-0 left-0 z-10 w-screen h-screen"
           onAvatarExported={(event) => {
             socket.emit("characterAvatarUpdate", event.data.url,null);
+            toast.success("Successfully updated avatar");
             setAvatarMode(false);
           }}
         />
@@ -200,12 +291,6 @@ export const UI = ({state, account}) => {
         onOk={handleSubmit} // Trigger handleSubmit on Ok
         onCancel={handleCancel}
       >
-        <p>Enter a link to be added to the items list:</p>
-        <Input
-          placeholder="Enter link"
-          value={inputLink}
-          onChange={handleInputChange}
-        />
         <Input
           placeholder="Enter Title"
           value={title}
