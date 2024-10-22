@@ -189,7 +189,7 @@ export const UI = ({state, account}) => {
       return { rotation: 3, y:0,x: getRandomNumber(ro3) }
     } else {
       alert("No empty space");
-      return null; 
+      return { rotation: 0, x:0,y: 0 }; 
     }
   }
   function getRandomNumber(arr) {
