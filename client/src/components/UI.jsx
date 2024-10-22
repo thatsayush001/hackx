@@ -3,6 +3,7 @@ import { useState } from "react";
 import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
 import { socket,mapAtom } from "./SocketManager";
 import { Modal, Button ,Input} from "antd"; // Import Ant Design Modal and Button
+import axios from "axios"
 
 // Atoms
 export const buildModeAtom = atom(false);
@@ -10,7 +11,8 @@ export const shopModeAtom = atom(false);
 export const draggedItemAtom = atom(null);
 export const draggedItemRotationAtom = atom(0);
 
-export const UI = () => {
+export const UI = ({state, account}) => {
+  const {contract} = state
   const [map] = useAtom(mapAtom);
   const [inputLink, setInputLink] = useState(""); // State for storing the input link
   const [buildMode, setBuildMode] = useAtom(buildModeAtom);
@@ -23,6 +25,10 @@ export const UI = () => {
 
   // State for controlling the Ant Design modal
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [title,setTitle] = useState(null)
+  const [price,setPrice] = useState(null)
+  const [img,setImg] = useState(null)
+  const [uri,setURI] = useState(null)
 
   // Functions to show and hide modal
   const showModal = () => {
@@ -36,27 +42,96 @@ export const UI = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-  const handleSubmit = () => {
-    const newItem = {
-      name: "frame",
-    size: [1,4],
-      gridPosition: [0, 0],
-      tmp: true,
-      link: inputLink,
-      by: localStorage.getItem("id"),
-    };
-    const temp = map.items
-    temp.push(newItem);
-    // Emit updated items to the server
-    // console.log(temp);
-    socket.emit("itemsUpdate", temp);
-
-    // Close the modal
-    setIsModalVisible(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      // Prepare the data for IPFS upload
+      const data = JSON.stringify({ title, price, img });
+      console.log("Uploading data to IPFS:", data);
+  
+      // Pin JSON to IPFS using Pinata API
+      const res = await axios({
+        method: "post",
+        url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+        data: data,
+        headers: {
+          pinata_api_key: `35cb1bf7be19d2a8fa0d`,
+          pinata_secret_api_key: `2c2e9e43bca7a619154cb48e8b060c5643ea6220d0b7c9deb565fa491b3b3a50`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const resData = await res.data;
+      console.log("IPFS Upload Success:", resData);
+  
+      // Set the URI for the uploaded art
+      const ipfsURI = `https://ipfs.io/ipfs/${resData.IpfsHash}`;
+      setURI(ipfsURI);
+  
+      // Interact with the smart contract
+      console.log("Calling contract to mint/upload art...");
+      const tx = await contract.uploadArt(ipfsURI); // Pass the IPFS URI to uploadArt function
+      await tx.wait(); // Wait for the transaction to be mined
+      console.log("Transaction Success:", tx);
+  
+      // Create a new item for the map
+      const newItem = {
+        name: "frame",
+        size: [1, 4],
+        gridPosition: [0, 0],
+        tmp: true,
+        link: img,
+        by: localStorage.getItem("id"),
+      };
+  
+      // Update map items
+      const temp = [...map.items];
+      temp.push(newItem);
+      console.log("Updated map items:", temp);
+  
+      // Emit updated items to the server
+      socket.emit("itemsUpdate", temp);
+  
+      // Close the modal
+      setIsModalVisible(false);
+  
+    } catch (error) {
+      console.error("Error during the submission process:", error);
+      window.alert("Minting error: " + error.message || "Unknown error occurred");
+    }
   };
+  
   const handleInputChange = (e) => {
     setInputLink(e.target.value);
   };
+  const handleImageChange =async (e) => {
+    e.preventDefault()
+    const file = e.target.files[0];
+    if (typeof file !== "undefined") {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        // console.log(formData)
+        const res = await axios({
+          method: "post",
+          url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+          data: formData,
+          headers: {
+            pinata_api_key: `35cb1bf7be19d2a8fa0d`,
+            pinata_secret_api_key: `2c2e9e43bca7a619154cb48e8b060c5643ea6220d0b7c9deb565fa491b3b3a50`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log(res);
+        const resData = await res.data;
+        setImg(`https://ipfs.io/ipfs/${resData.IpfsHash}`);
+      } catch (error) {
+        window.alert(error);
+      }
+    }
+
+  }
 
   return (
     <>
@@ -86,6 +161,22 @@ export const UI = () => {
           value={inputLink}
           onChange={handleInputChange}
         />
+        <Input
+          placeholder="Enter Title"
+          value={title}
+          onChange={(e)=>setTitle(e.target.value)}
+        />
+        <Input
+          placeholder="Enter Price"
+          value={price}
+          onChange={(e)=>setPrice(e.target.value)}
+        />
+        <Input
+          type="file"
+          
+          onChange={handleImageChange}
+        />
+
         <Button type="primary" onClick={handleSubmit} className="mt-4">
           Submit
         </Button>

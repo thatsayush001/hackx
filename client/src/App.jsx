@@ -104,7 +104,7 @@ function App() {
           <Experience onFrameClick={showModal} />
         </ScrollControls>
       </Canvas>
-      <UI />
+      <UI state={state} account={account}/>
     </>
   );
 }
