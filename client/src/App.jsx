@@ -13,6 +13,8 @@ import StoreWalls3 from "./components/walls/Storewalls3";
 import StoreWalls4 from "./components/walls/Storewalls4";
 import { ethers } from 'ethers';
 import abi from './abi/NFTGallery.json'; // Make sure to import the ABI
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [shopMode] = useAtom(shopModeAtom);
@@ -85,6 +87,7 @@ function App() {
   };
   return (
     <>
+    <ToastContainer/>
     <Navbar connectWallet={connectWallet} account={account} state={state}/>
     <Modal
         title="Frame Modal"

@@ -13,6 +13,8 @@ import {
   draggedItemRotationAtom,
   shopModeAtom,
 } from "./UI";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export const Experience = ({ onFrameClick }) => {
   const [buildMode, setBuildMode] = useAtom(buildModeAtom);
   const [shopMode, setShopMode] = useAtom(shopModeAtom);
@@ -51,6 +53,7 @@ export const Experience = ({ onFrameClick }) => {
         const newItems = items;
         console.log(newItems[draggedItem])
         // need to update blockchain coordinates here
+        toast.success("Position changed successfully");
         setDraggedItem(null);
       }
     }
@@ -213,7 +216,7 @@ export const Experience = ({ onFrameClick }) => {
                   setDraggedItem((prev) => (prev === null ? idx : prev));
                   setDraggedItemRotation(item.rotation || 0);
                 } else {
-                  alert("not allowed");
+                  toast.error("Art does not belong to current user");
                   e.stopPropagation()
                 }
               } else {

@@ -4,6 +4,8 @@ import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
 import { socket,mapAtom } from "./SocketManager";
 import { Modal, Button ,Input} from "antd"; // Import Ant Design Modal and Button
 import axios from "axios"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Atoms
 export const buildModeAtom = atom(false);
@@ -120,11 +122,13 @@ export const UI = ({state, account}) => {
       socket.emit("itemsUpdate", temp);
   
       // Close the modal
+      toast.success("Successfully added new Art");
       setIsModalVisible(false);
   
     } catch (error) {
       console.error("Error during the submission process:", error);
-      window.alert("Minting error: " + error.message || "Unknown error occurred");
+      // window.alert("Minting error: " + error.message || "Unknown error occurred");
+      toast.error("Error during the submission process");
     }
   };
 
@@ -273,6 +277,7 @@ export const UI = ({state, account}) => {
           className="fixed top-0 left-0 z-10 w-screen h-screen"
           onAvatarExported={(event) => {
             socket.emit("characterAvatarUpdate", event.data.url,null);
+            toast.success("Successfully updated avatar");
             setAvatarMode(false);
           }}
         />
@@ -286,12 +291,6 @@ export const UI = ({state, account}) => {
         onOk={handleSubmit} // Trigger handleSubmit on Ok
         onCancel={handleCancel}
       >
-        <p>Enter a link to be added to the items list:</p>
-        <Input
-          placeholder="Enter link"
-          value={inputLink}
-          onChange={handleInputChange}
-        />
         <Input
           placeholder="Enter Title"
           value={title}
