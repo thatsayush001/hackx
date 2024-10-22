@@ -54,7 +54,7 @@ export const Experience = ({ onFrameClick,contractState}) => {
         const newItems = items;
         console.log(newItems[draggedItem])
         // need to update blockchain coordinates here
-        const tx = await contract.setCoordinates(id,gridPosition[0],gridPosition[1],rotation)
+        const tx = await contract.setCoordinates(newItems[draggedItem].id,newItems[draggedItem].gridPosition[0],newItems[draggedItem].gridPosition[1],newItems[draggedItem].rotation)
         await tx.wait();
         console.log("Coordinates set successfully. Hash:",tx)
         toast.success("Position changed successfully");
