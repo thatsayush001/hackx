@@ -168,7 +168,7 @@ export const Experience = ({ onFrameClick }) => {
         gridPosition: [0, 0],
         tmp: true,
         link: "https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/640px-Flag_of_India.svg.png",
-        by: localStorage.getItem("id"),
+        by: localStorage.getItem("address"),
       },
     ]);
     setDraggedItem(items.length);
@@ -209,7 +209,7 @@ export const Experience = ({ onFrameClick }) => {
             item={item}
             onClick={(e) => {
               if (buildMode) {
-                if (item.by == localStorage.getItem("id")) {
+                if (item.by == localStorage.getItem("address")) {
                   setDraggedItem((prev) => (prev === null ? idx : prev));
                   setDraggedItemRotation(item.rotation || 0);
                 } else {

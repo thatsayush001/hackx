@@ -43,7 +43,7 @@ export const UI = () => {
       gridPosition: [0, 0],
       tmp: true,
       link: inputLink,
-      by: localStorage.getItem("id"),
+      by: localStorage.getItem("address"),
     };
     const temp = map.items
     temp.push(newItem);
@@ -66,7 +66,7 @@ export const UI = () => {
           subdomain="wawa-sensei-tutorial"
           className="fixed top-0 left-0 z-10 w-screen h-screen"
           onAvatarExported={(event) => {
-            socket.emit("characterAvatarUpdate", event.data.url);
+            socket.emit("characterAvatarUpdate", event.data.url,null);
             setAvatarMode(false);
           }}
         />

@@ -2,11 +2,11 @@ import pathfinding from "pathfinding";
 import { Server } from "socket.io";
 const io = new Server({
   cors: {
-    origin: "http://localhost:5175",
+    origin: "http://localhost:5173",
   },
 });
 
-io.listen(3001);
+io.listen(8080);
 
 const characters = [];
 
@@ -507,22 +507,29 @@ io.on("connection", (socket) => {
     topColor: generateRandomHexColor(),
     bottomColor: generateRandomHexColor(),
     avatarUrl: "https://models.readyplayer.me/64f0265b1db75f90dcfd9e2c.glb",
+    address: "",
   });
 
   socket.emit("hello", {
     map,
     characters,
     id: socket.id,
-    items, 
+    items,
   });
 
   io.emit("characters", characters);
 
-  socket.on("characterAvatarUpdate", (avatarUrl) => {
+  socket.on("characterAvatarUpdate", (avatarUrl, address) => {
     const character = characters.find(
       (character) => character.id === socket.id
     );
-    character.avatarUrl = avatarUrl.split("?")[0] + "?" + new Date().getTime();
+    if (address != null) {
+      character.address = address;
+    }
+    if (avatarUrl != null) {
+      character.avatarUrl =
+        avatarUrl.split("?")[0] + "?" + new Date().getTime();
+    }
     io.emit("characters", characters);
   });
 
