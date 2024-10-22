@@ -82,7 +82,7 @@ export const UI = ({state, account}) => {
         gridPosition: [0, 0],
         tmp: true,
         link: img,
-        by: localStorage.getItem("id"),
+        by: localStorage.getItem("address"),
       };
   
       // Update map items
