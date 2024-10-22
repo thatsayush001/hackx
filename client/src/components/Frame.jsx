@@ -12,7 +12,7 @@ export function Frame({ imgLink,rotation, ...props }) {
   return (
     <group {...props} dispose={null} rotation-y={((rotation || 0) * Math.PI) / 2}>
       <group
-        position={[0.003, 1.886, 0.064]}
+        position={[-0.200, 1.786, 0.064]}
         rotation={[Math.PI / 2, 0, -Math.PI / 2]}
         scale={0.855}>
         {/* Use the image texture as the material */}
