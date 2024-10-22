@@ -58,11 +58,95 @@ io.listen(8080);
 const characters = [];
 
 const items = {
+  stanchion1: {
+    name: "stanchion1",
+    size: [1, 5],
+  },
+  stanchion2: {
+    name: "stanchion1",
+    size: [1, 5],
+  },
+  stanchion3: {
+    name: "stanchion1",
+    size: [1, 5],
+  },
+  stanchion4: {
+    name: "stanchion1",
+    size: [1, 5],
+  },
+  stanchion5: {
+    name: "stanchion1",
+    size: [1, 5],
+  },
+  stanchion6: {
+    name: "stanchion2",
+    size: [5, 1],
+  },
+  stanchion7: {
+    name: "stanchion2",
+    size: [5, 1],
+  },
+  stanchion8: {
+    name: "stanchion2",
+    size: [5, 1],
+  },
+  stanchion9: {
+    name: "stanchion2",
+    size: [5, 1],
+  },
+  stanchion10: {
+    name: "stanchion2",
+    size: [5, 1],
+  },
+  stanchion11: {
+    name: "stanchion1",
+    size: [1, 5],
+  },
+  stanchion12: {
+    name: "stanchion1",
+    size: [1, 5],
+  },
+  stanchion13: {
+    name: "stanchion1",
+    size: [1, 5],
+  },
+  stanchion14: {
+    name: "stanchion1",
+    size: [1, 5],
+  },
+  stanchion15: {
+    name: "stanchion1",
+    size: [1, 5],
+  },
+  stanchion16: {
+    name: "stanchion2",
+    size: [5, 1],
+  },
+  stanchion17: {
+    name: "stanchion2",
+    size: [5, 1],
+  },
+  stanchion18: {
+    name: "stanchion2",
+    size: [5, 1],
+  },
+  stanchion19: {
+    name: "stanchion2",
+    size: [5, 1],
+  },
+  stanchion20: {
+    name: "stanchion2",
+    size: [5, 1],
+  },
   portraitWall: {
     name: "portraitWall",
     size: [1, 14],
   },
   portraitWall2: {
+    name: "portraitWall",
+    size: [1, 14],
+  },
+  portraitWall3: {
     name: "portraitWall",
     size: [1, 14],
   },
@@ -337,12 +421,96 @@ const map = {
   gridDivision: 2,
   items: [
     {
+      ...items.stanchion1,
+      gridPosition: [1, 2],
+    },
+    {
+      ...items.stanchion2,
+      gridPosition: [1, 7],
+    },
+    {
+      ...items.stanchion3,
+      gridPosition: [1, 12],
+    },
+    {
+      ...items.stanchion4,
+      gridPosition: [1, 17],
+    },
+    {
+      ...items.stanchion5,
+      gridPosition: [1, 22],
+    },
+    {
+      ...items.stanchion6,
+      gridPosition: [3, 1],
+    },
+    {
+      ...items.stanchion7,
+      gridPosition: [8, 1],
+    },
+    {
+      ...items.stanchion8,
+      gridPosition: [13, 1],
+    },
+    {
+      ...items.stanchion9,
+      gridPosition: [18, 1],
+    },
+    {
+      ...items.stanchion10,
+      gridPosition: [23, 1],
+    },
+    {
+      ...items.stanchion11,
+      gridPosition: [27, 2],
+    },
+    {
+      ...items.stanchion12,
+      gridPosition: [27, 7],
+    },
+    {
+      ...items.stanchion13,
+      gridPosition: [27, 12],
+    },
+    {
+      ...items.stanchion14,
+      gridPosition: [27, 17],
+    },
+    {
+      ...items.stanchion15,
+      gridPosition: [27, 22],
+    },
+    {
+      ...items.stanchion16,
+      gridPosition: [3, 27],
+    },
+    {
+      ...items.stanchion17,
+      gridPosition: [8, 27],
+    },
+    {
+      ...items.stanchion18,
+      gridPosition: [13, 27],
+    },
+    {
+      ...items.stanchion19,
+      gridPosition: [18, 27],
+    },
+    {
+      ...items.stanchion20,
+      gridPosition: [23, 27],
+    },
+    {
       ...items.portraitWall,
-      gridPosition: [10, 8],
+      gridPosition: [8, 12],
     },
     {
       ...items.portraitWall2,
-      gridPosition: [20, 8],
+      gridPosition: [15, 4],
+    },
+    {
+      ...items.portraitWall3,
+      gridPosition: [22, 12],
     },
     // {
     //   ...items.showerRound,
