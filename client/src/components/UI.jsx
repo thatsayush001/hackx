@@ -107,7 +107,8 @@ export const UI = ({state, account}) => {
         auctionActive: false,
         sold: false,
         maxBidder: '0x0000000000000000000000000000000000000000',
-        currentBid: 0
+        currentBid: 0,
+        id :Number(count)
       }
       // Update map items
       const temp = [...map.items];

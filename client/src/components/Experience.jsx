@@ -49,7 +49,7 @@ export const Experience = ({ onFrameClick }) => {
           });
         }
         const newItems = items;
-        // console.log(newItems[draggedItem])
+        console.log(newItems[draggedItem])
         // need to update blockchain coordinates here
         setDraggedItem(null);
       }
@@ -219,7 +219,7 @@ export const Experience = ({ onFrameClick }) => {
               } else {
                 if (item.name == "frame") {
                   console.log("hello");
-                  onFrameClick(item.link);
+                  onFrameClick(item.id);
                 }
               }
             }}

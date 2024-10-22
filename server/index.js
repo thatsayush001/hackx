@@ -44,7 +44,8 @@ const fetchAllPosts = async () => {
       auctionActive : post[5],
       sold : post[6],
       maxBidder : post[4],
-      currentBid : Number(post[3])
+      currentBid : Number(post[3]),
+      id: Number(post[0])
     };
     console.log(obj);
     map.items.push(obj);
