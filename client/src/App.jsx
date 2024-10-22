@@ -74,7 +74,8 @@ function App() {
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
       setAccount(address); // Set the connected account
-
+      socket.emit("characterAvatarUpdate", null,address);
+      localStorage.setItem("address",address);
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
       localStorage.setItem("contract", JSON.stringify(contract));
       setState({ provider, signer, contract, address });

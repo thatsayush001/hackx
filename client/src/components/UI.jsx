@@ -141,7 +141,7 @@ export const UI = ({state, account}) => {
           subdomain="wawa-sensei-tutorial"
           className="fixed top-0 left-0 z-10 w-screen h-screen"
           onAvatarExported={(event) => {
-            socket.emit("characterAvatarUpdate", event.data.url);
+            socket.emit("characterAvatarUpdate", event.data.url,null);
             setAvatarMode(false);
           }}
         />
