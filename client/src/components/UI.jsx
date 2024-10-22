@@ -76,6 +76,13 @@ export const UI = ({state, account}) => {
       const tx = await contract.uploadArt(ipfsURI); // Pass the IPFS URI to uploadArt function
       await tx.wait(); // Wait for the transaction to be mined
       console.log("Transaction Success:", tx);
+      const count = await contract.totalPosts();
+      console.log("Total Posts:", count);
+      const tx2 = await contract.setCoordinates(Number(count),8,0,1)
+      await tx2.wait()
+      console.log("Transaction Success:", tx2);
+      fetchArtPieces()
+
   
       // Create a new item for the map
       // const newItem = {
@@ -90,10 +97,10 @@ export const UI = ({state, account}) => {
       const newItem = {
         name: 'frame',
         size: [ 1, 4 ],
-        gridPosition: [ 8, 0 ],
+        gridPosition: [ 15, 0 ],
         by: localStorage.getItem("address"),
         likes: 0,
-        rotation: 0,
+        rotation: 1,
         link: img,
         title: title,
         price: price,
