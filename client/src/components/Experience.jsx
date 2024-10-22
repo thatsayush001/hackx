@@ -49,6 +49,9 @@ export const Experience = ({ onFrameClick }) => {
             return newItems;
           });
         }
+        const newItems = items;
+        // console.log(newItems[draggedItem])
+        // need to update blockchain coordinates here
         setDraggedItem(null);
       }
     }
@@ -136,7 +139,7 @@ export const Experience = ({ onFrameClick }) => {
   const state = useThree((state) => state);
 
   useEffect(() => {
-    console.log(items);
+    // console.log(items);
     if (buildMode) {
       setItems(map?.items || []);
       state.camera.position.set(8, 8, 8);
