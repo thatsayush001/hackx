@@ -1,58 +1,8 @@
 import React, { useState } from 'react';
-import { ethers } from 'ethers';
-import abi from '../abi/ArtGallery.json'; // Make sure to import the ABI
 
-const Navbar = () => {
-  const [account, setAccount] = useState(null);
-  const [state, setState] = useState({
-    provider:null,
-    signer:null,
-    contract:null,
-    address:null
-  });
-
+const Navbar = ({connectWallet,state,account}) => {
+ 
   // Function to connect to Metamask
-  const connectWallet = async () => {
-    try {
-      const { ethereum } = window;
-
-      if (!ethereum) {
-        console.log('Metamask is not installed');
-        return;
-      }
-
-      // Listen for changes in the account or chain
-      ethereum.on('chainChanged', () => {
-        window.location.reload();
-      });
-
-      ethereum.on('accountsChanged', () => {
-        window.location.reload();
-      });
-
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-
-      if (accounts.length === 0) {
-        console.log('No account found');
-        return;
-      }
-
-      const contractAddress = '0xe89a60eD235Dab51Cbefa057780Ef52230a74C89'; // Replace with your contract address
-      const contractABI = abi.abi;
-
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const address = await signer.getAddress();
-      localStorage.setItem("id",address);
-      setAccount(address); // Set the connected account
-
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
-      localStorage.setItem("contract", JSON.stringify(contract));
-      setState({ provider, signer, contract, address });
-    } catch (error) {
-      console.error('Error connecting to Metamask:', error);
-    }
-  };
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">

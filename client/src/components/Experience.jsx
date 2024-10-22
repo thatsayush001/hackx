@@ -212,6 +212,7 @@ export const Experience = ({onFrameClick}) => {
                   setDraggedItemRotation(item.rotation || 0);
                 }else{
                   alert("not allowed");
+                  e.stopPropagation()
                 }
               }
               else{
@@ -220,7 +221,6 @@ export const Experience = ({onFrameClick}) => {
                   onFrameClick(item.link )
                 }
               }
-              e.stopPropagation()
             }}
             isDragging={draggedItem === idx}
             dragPosition={dragPosition}
