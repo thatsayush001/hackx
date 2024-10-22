@@ -82,7 +82,7 @@ export default function Home() {
         creator,
         uri,
         ethers.parseEther(price),
-        artType
+        artType,
       );
       await tx.wait();
       console.log("Art uploaded successfully!");
