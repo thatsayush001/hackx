@@ -50,7 +50,7 @@ export const Item = ({
       onPointerLeave={() => setHover(false)}
     >
       {/* <primitive object={clone} rotation-y={((rotation || 0) * Math.PI) / 2} /> */}
-      {name=="frame" ? <Frame imgLink={link} rotation={rotation}/>:<primitive object={clone} rotation-y={((rotation || 0) * Math.PI) / 2} />}
+      {name=="frame" ? <Frame imgLink={link} rotation={rotation} item={item}/>:<primitive object={clone} rotation-y={((rotation || 0) * Math.PI) / 2} />}
         
       {isDragging && (
         <mesh>
