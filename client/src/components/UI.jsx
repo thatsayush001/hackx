@@ -1,5 +1,5 @@
 import { atom, useAtom } from "jotai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
 import { socket,mapAtom } from "./SocketManager";
 import { Modal, Button ,Input} from "antd"; // Import Ant Design Modal and Button
@@ -29,6 +29,7 @@ export const UI = ({state, account}) => {
   const [price,setPrice] = useState(null)
   const [img,setImg] = useState(null)
   const [uri,setURI] = useState(null)
+  const [artPieces,setArtPieces] = useState([])
 
   // Functions to show and hide modal
   const showModal = () => {
@@ -68,6 +69,7 @@ export const UI = ({state, account}) => {
       // Set the URI for the uploaded art
       const ipfsURI = `https://ipfs.io/ipfs/${resData.IpfsHash}`;
       setURI(ipfsURI);
+      console.log(ipfsURI)
   
       // Interact with the smart contract
       console.log("Calling contract to mint/upload art...");
@@ -132,6 +134,27 @@ export const UI = ({state, account}) => {
     }
 
   }
+  const fetchArtPieces = async () => {
+    try {
+      // Call the contract's getAllPosts function
+      const artPieces = await contract.getAllPosts();
+      setArtPieces(artPieces)
+      
+      
+      
+      
+      console.log("Fetched Art Pieces:", artPieces);
+      return artPiecesFormatted;
+    } catch (error) {
+      console.error("Error fetching art pieces:", error);
+      throw new Error("Failed to fetch art pieces.");
+    }
+  };
+  useEffect(()=>{
+    fetchArtPieces()
+
+  })
+  
 
   return (
     <>

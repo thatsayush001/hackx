@@ -1,10 +1,35 @@
 import pathfinding from "pathfinding";
 import { Server } from "socket.io";
+import { ethers } from "ethers";
+import { JsonRpcProvider } from "ethers";
+import  abi  from "../client/src/abi/NFTGallery.json" assert { type: "json" }; // Ensure this path is correct
+
 const io = new Server({
   cors: {
     origin: "http://localhost:5173",
   },
 });
+
+const privateKey = "529038177e54eb14bb591eaf0e7517112d7f4189f372f4a15a7d0229236adf7f";
+const alchemyProvider = new JsonRpcProvider("https://polygon-amoy.g.alchemy.com/v2/OlHr_15i85AUNY6JNMQ2isTduKxgWGFy");
+const contractAddress = "0x49397BF80Eebf92fa0c1C8DeE417cDDBB1d006c7";
+
+const signer = new ethers.Wallet(privateKey, alchemyProvider);
+// console.log(abi.abi)
+const contract = new ethers.Contract(contractAddress, abi.abi, signer);
+
+// Check if the contract instance is created successfully
+if (contract) {
+  console.log("Contract instance:", contract);
+} else {
+  console.error("Failed to create contract instance");
+}
+const fetchAllPosts = async()=>{
+  const posts = await contract.getAllPosts();
+  console.log(posts)
+}
+fetchAllPosts()
+
 
 io.listen(8080);
 
@@ -499,6 +524,7 @@ const generateRandomHexColor = () => {
 
 io.on("connection", (socket) => {
   console.log("user connected");
+
 
   characters.push({
     id: socket.id,
