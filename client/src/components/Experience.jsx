@@ -13,7 +13,8 @@ import {
   draggedItemRotationAtom,
   shopModeAtom,
 } from "./UI";
-export const Experience = ({ onFrameClick }) => {
+export const Experience = ({ onFrameClick,contractState}) => {
+  const {contract} = contractState;
   const [buildMode, setBuildMode] = useAtom(buildModeAtom);
   const [shopMode, setShopMode] = useAtom(shopModeAtom);
   const [characters] = useAtom(charactersAtom);
@@ -26,7 +27,7 @@ export const Experience = ({ onFrameClick }) => {
   const scene = useThree((state) => state.scene);
   const [user] = useAtom(userAtom);
 
-  const onPlaneClicked = (e) => {
+  const onPlaneClicked = async(e) => {
     if (!buildMode) {
       const character = scene.getObjectByName(`character-${user}`);
       if (!character) {
@@ -51,6 +52,9 @@ export const Experience = ({ onFrameClick }) => {
         const newItems = items;
         console.log(newItems[draggedItem])
         // need to update blockchain coordinates here
+        const tx = await contract.setCoordinates(id,gridPosition[0],gridPosition[1],rotation)
+        await tx.wait();
+        console.log("Coordinates set successfully. Hash:",tx)
         setDraggedItem(null);
       }
     }
@@ -218,8 +222,8 @@ export const Experience = ({ onFrameClick }) => {
                 }
               } else {
                 if (item.name == "frame") {
-                  console.log("hello");
-                  onFrameClick(item.id);
+                  console.log(item);
+                  onFrameClick(item.id,item.price,item.likes);
                 }
               }
             }}
