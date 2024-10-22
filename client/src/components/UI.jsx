@@ -48,7 +48,7 @@ export const UI = () => {
     const temp = map.items
     temp.push(newItem);
     // Emit updated items to the server
-    console.log(temp);
+    // console.log(temp);
     socket.emit("itemsUpdate", temp);
 
     // Close the modal

@@ -11,14 +11,22 @@ io.listen(3001);
 const characters = [];
 
 const items = {
+  portraitWall: {
+    name: "portraitWall",
+    size: [1, 14],
+  },
+  portraitWall2: {
+    name: "portraitWall",
+    size: [1, 14],
+  },
   frame: {
     name: "frame",
-    size: [1,4],
+    size: [1, 4],
   },
   washer: {
     name: "washer",
     size: [2, 2],
-    drag : false
+    drag: false,
   },
   toiletSquare: {
     name: "toiletSquare",
@@ -282,9 +290,17 @@ const map = {
   gridDivision: 2,
   items: [
     {
+      ...items.portraitWall,
+      gridPosition: [10, 8],
+    },
+    {
+      ...items.portraitWall2,
+      gridPosition: [20, 8],
+    },
+    {
       ...items.frame,
-      gridPosition: [10,10],
-      link : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlZXv6MFianbyxJhMpVZr-mOF5cEhS0ViNew&s"
+      gridPosition: [10, 10],
+      link: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlZXv6MFianbyxJhMpVZr-mOF5cEhS0ViNew&s",
     },
     // {
     //   ...items.showerRound,
