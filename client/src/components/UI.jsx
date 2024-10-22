@@ -78,15 +78,30 @@ export const UI = ({state, account}) => {
       console.log("Transaction Success:", tx);
   
       // Create a new item for the map
+      // const newItem = {
+      //   name: "frame",
+      //   size: [1, 4],
+      //   gridPosition: [0, 0],
+      //   tmp: true,
+      //   link: img,
+      //   by: localStorage.getItem("address"),
+      // };
+
       const newItem = {
-        name: "frame",
-        size: [1, 4],
-        gridPosition: [0, 0],
-        tmp: true,
-        link: img,
+        name: 'frame',
+        size: [ 1, 4 ],
+        gridPosition: [ 8, 0 ],
         by: localStorage.getItem("address"),
-      };
-  
+        likes: 0,
+        rotation: 0,
+        link: img,
+        title: title,
+        price: price,
+        auctionActive: false,
+        sold: false,
+        maxBidder: '0x0000000000000000000000000000000000000000',
+        currentBid: 0
+      }
       // Update map items
       const temp = [...map.items];
       temp.push(newItem);
@@ -152,8 +167,7 @@ export const UI = ({state, account}) => {
   };
   useEffect(()=>{
     fetchArtPieces()
-
-  })
+  },[])
   
 
   return (

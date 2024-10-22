@@ -2,7 +2,7 @@ import pathfinding from "pathfinding";
 import { Server } from "socket.io";
 import { ethers } from "ethers";
 import { JsonRpcProvider } from "ethers";
-import  abi  from "../client/src/abi/NFTGallery.json" assert { type: "json" }; // Ensure this path is correct
+import abi from "../client/src/abi/NFTGallery.json" assert { type: "json" }; // Ensure this path is correct
 
 const io = new Server({
   cors: {
@@ -10,8 +10,11 @@ const io = new Server({
   },
 });
 
-const privateKey = "529038177e54eb14bb591eaf0e7517112d7f4189f372f4a15a7d0229236adf7f";
-const alchemyProvider = new JsonRpcProvider("https://polygon-amoy.g.alchemy.com/v2/OlHr_15i85AUNY6JNMQ2isTduKxgWGFy");
+const privateKey =
+  "529038177e54eb14bb591eaf0e7517112d7f4189f372f4a15a7d0229236adf7f";
+const alchemyProvider = new JsonRpcProvider(
+  "https://polygon-amoy.g.alchemy.com/v2/OlHr_15i85AUNY6JNMQ2isTduKxgWGFy"
+);
 const contractAddress = "0x49397BF80Eebf92fa0c1C8DeE417cDDBB1d006c7";
 
 const signer = new ethers.Wallet(privateKey, alchemyProvider);
@@ -19,17 +22,35 @@ const signer = new ethers.Wallet(privateKey, alchemyProvider);
 const contract = new ethers.Contract(contractAddress, abi.abi, signer);
 
 // Check if the contract instance is created successfully
-if (contract) {
-  console.log("Contract instance:", contract);
-} else {
-  console.error("Failed to create contract instance");
-}
-const fetchAllPosts = async()=>{
+// if (contract) {
+//   console.log("Contract instance:", contract);
+// } else {
+//   console.error("Failed to create contract instance");
+// }
+const fetchAllPosts = async () => {
   const posts = await contract.getAllPosts();
-  console.log(posts)
-}
-fetchAllPosts()
-
+  posts.map(async (post, i) => {
+    const imgResponse = await fetch(post[1]);
+    const imgData = await imgResponse.json();
+    const obj = {
+      ...items.frame,
+      gridPosition: [Number(post[8]), Number(post[9])],
+      by : post[2],
+      likes : Number(post[7]),
+      rotation : Number(post[10]),
+      link: imgData.img,
+      title : imgData.title,
+      price : imgData.price,
+      auctionActive : post[5],
+      sold : post[6],
+      maxBidder : post[4],
+      currentBid : Number(post[3])
+    };
+    console.log(obj);
+    map.items.push(obj);
+  });
+};
+// fetchAllPosts()
 
 io.listen(8080);
 
@@ -322,11 +343,6 @@ const map = {
       ...items.portraitWall2,
       gridPosition: [20, 8],
     },
-    {
-      ...items.frame,
-      gridPosition: [10, 10],
-      link: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlZXv6MFianbyxJhMpVZr-mOF5cEhS0ViNew&s",
-    },
     // {
     //   ...items.showerRound,
     //   gridPosition: [0, 0],
@@ -524,7 +540,7 @@ const generateRandomHexColor = () => {
 
 io.on("connection", (socket) => {
   console.log("user connected");
-
+  fetchAllPosts();
 
   characters.push({
     id: socket.id,
