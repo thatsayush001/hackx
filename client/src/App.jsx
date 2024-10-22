@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { useState } from "react";
 import { Experience } from "./components/Experience";
 import Navbar from "./components/Navbar";
-import { SocketManager } from "./components/SocketManager";
+import { SocketManager,socket } from "./components/SocketManager";
 import { UI, shopModeAtom } from "./components/UI";
 import StoreWalls from "./components/walls/Storewalls";
 import StoreWalls2 from "./components/walls/Storewalls2";
