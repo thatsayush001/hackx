@@ -217,9 +217,7 @@ export const UI = ({state, account}) => {
     return firstNumbers;
   }
   
-  const handleInputChange = (e) => {
-    setInputLink(e.target.value);
-  };
+  
   const handleImageChange =async (e) => {
     e.preventDefault()
     const file = e.target.files[0];
@@ -286,31 +284,61 @@ export const UI = ({state, account}) => {
 
       {/* Ant Design Modal */}
       <Modal
-        title="Enter Link"
-        open={isModalVisible}
-        onOk={handleSubmit} // Trigger handleSubmit on Ok
-        onCancel={handleCancel}
-      >
-        <Input
-          placeholder="Enter Title"
-          value={title}
-          onChange={(e)=>setTitle(e.target.value)}
-        />
-        <Input
-          placeholder="Enter Price"
-          value={price}
-          onChange={(e)=>setPrice(e.target.value)}
-        />
-        <Input
-          type="file"
-          
-          onChange={handleImageChange}
-        />
+  title={
+    <span className="text-2xl font-bold text-gray-800">Enter Link</span>
+  }
+  open={isModalVisible}
+  onOk={handleSubmit} // Trigger handleSubmit on Ok
+  onCancel={handleCancel}
+  className="p-6 rounded-lg shadow-lg"
+  footer={null} // Remove the default footer buttons
+>
+  <div className="space-y-4">
+    <div>
+      <label className="block text-gray-700 text-sm font-medium mb-1">
+        Title
+      </label>
+      <Input
+        placeholder="Enter Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
+      />
+    </div>
 
-        <Button type="primary" onClick={handleSubmit} className="mt-4">
-          Submit
-        </Button>
-      </Modal>
+    <div>
+      <label className="block text-gray-700 text-sm font-medium mb-1">
+        Price
+      </label>
+      <Input
+        placeholder="Enter Price"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
+      />
+    </div>
+
+    <div>
+      <label className="block text-gray-700 text-sm font-medium mb-1">
+        Upload Image
+      </label>
+      <Input
+        type="file"
+        onChange={handleImageChange}
+        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
+      />
+    </div>
+
+    <Button
+      type="primary"
+      onClick={handleSubmit}
+      className="w-full mt-4 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition-all"
+    >
+      Submit
+    </Button>
+  </div>
+</Modal>
+
       <div className="fixed inset-4 flex items-end justify-center pointer-events-none">
         <div className="flex items-center space-x-4 pointer-events-auto">
           

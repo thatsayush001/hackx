@@ -1,17 +1,17 @@
-import { ScrollControls, Sky } from "@react-three/drei";
+import { ScrollControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Modal } from "antd";
 import { useAtom } from "jotai";
 import { useState } from "react";
 import { Experience } from "./components/Experience";
 import Navbar from "./components/Navbar";
-import { SocketManager, socket, mapAtom } from "./components/SocketManager";
+import { SocketManager, socket } from "./components/SocketManager";
 import { UI, shopModeAtom } from "./components/UI";
 import StoreWalls from "./components/walls/Storewalls";
 import StoreWalls2 from "./components/walls/Storewalls2";
 import StoreWalls3 from "./components/walls/Storewalls3";
 import StoreWalls4 from "./components/walls/Storewalls4";
-import { ethers, parseEther } from "ethers";
+import { ethers, JsonRpcProvider } from "ethers";
 import abi from "./abi/NFTGallery.json"; // Make sure to import the ABI
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,19 +23,17 @@ function App() {
   const [price, setPrice] = useState("");
   const [likes, setLikes] = useState(0);
 
-  const [map] = useAtom(mapAtom);
-
-  const showModal = (id, price, likes) => {
+  const showModal = (id, price, likes, title, by) => {
     setId(id);
     console.log(id);
     setPrice(price);
     setLikes(likes);
     setIsModalVisible(true);
+    setTitle(title);
+    setOwner(by);
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
+  
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -49,6 +47,8 @@ function App() {
     address: null,
   });
   const [bid, setBid] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [owner, setOwner] = useState("");
 
   const connectWallet = async () => {
     try {
@@ -76,23 +76,28 @@ function App() {
         console.log("No account found");
         return;
       }
+      const address = accounts[0];
 
-      const contractAddress = "0x49397BF80Eebf92fa0c1C8DeE417cDDBB1d006c7"; // Replace with your contract address
       const contractABI = abi.abi;
+      const privateKey =
+        "529038177e54eb14bb591eaf0e7517112d7f4189f372f4a15a7d0229236adf7f";
+      const alchemyProvider = new JsonRpcProvider(
+        "https://polygon-amoy.g.alchemy.com/v2/OlHr_15i85AUNY6JNMQ2isTduKxgWGFy"
+      );
+      const contractAddress = "0x49397BF80Eebf92fa0c1C8DeE417cDDBB1d006c7";
 
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const address = await signer.getAddress();
-      setAccount(address); // Set the connected account
-      socket.emit("characterAvatarUpdate", null, address);
-      localStorage.setItem("address", address);
+      const signer = new ethers.Wallet(privateKey, alchemyProvider);
+      // console.log(abi.abi)
       const contract = new ethers.Contract(
         contractAddress,
         contractABI,
         signer
       );
+      setAccount(address); // Set the connected account
+      socket.emit("characterAvatarUpdate", null, address);
+      localStorage.setItem("address", address);
       localStorage.setItem("contract", JSON.stringify(contract));
-      setState({ provider, signer, contract, address });
+      setState({ alchemyProvider, signer, contract, address });
     } catch (error) {
       console.error("Error connecting to Metamask:", error);
     }
@@ -114,14 +119,7 @@ function App() {
       // Wait for the transaction to be confirmed
       await tx.wait();
 
-      toast.success("Bought Successfully!!");
       console.log("Bought Successfully!!");
-      let tempItem = map.items;
-
-      tempItem = tempItem.filter(
-        (item) => !(item.name === "frame" && item.id === id)
-      );
-      socket.emit("itemsUpdate", tempItem);
     } catch (error) {
       console.error("Error buying art:", error);
     }
@@ -132,7 +130,7 @@ function App() {
         value: ethers.parseEther(String(bid)),
       });
       await tx.wait();
-      toast.success("Bid Successfully!!");
+      console.log("Bid Successfully!!");
     } catch (error) {
       console.log(error);
     }
@@ -141,17 +139,8 @@ function App() {
     try {
       const tx = await state.contract.toggleAuction(id);
       await tx.wait();
-      let tempItem = map.items;
-      tempItem.map((item) => {
-        if (item.name === "frame" && item.id === id) {
-          console.log(item)
-          item.auctionActive = !item.auctionActive;
-          console.log(item)
-        }
-      });
-      socket.emit("itemsUpdate", tempItem);
+
       console.log("Auction Toggled");
-      toast.success("Auction Toggled");
     } catch (error) {}
   };
   const [bidders, setBidders] = useState([]);
@@ -174,14 +163,14 @@ function App() {
   const handleGetMaxBid = async (id) => {
     try {
       const fetchedMaxBid = await state.contract.getMaxBid(id);
-      
+
       // Convert the fetched value from Wei to Ether for display
       const maxBidInEther = ethers.formatEther(fetchedMaxBid);
-      
+
       // After fetching, store the max bid and open the modal
       setMaxBid(maxBidInEther);
       setIsMaxBidModalVisible(true);
-      
+
       console.log("Max bid fetched:", maxBidInEther);
     } catch (error) {
       console.error("Error fetching max bid:", error);
@@ -191,16 +180,6 @@ function App() {
     try {
       const tx = await state.contract.likeArt(id);
       await tx.wait();
-      let tempItem = map.items;
-      tempItem.map((item) => {
-        if (item.name === "frame" && item.id === id) {
-          console.log(item)
-          item.likes = item.likes + 1;
-          setLikes(item.likes);
-        }
-      });
-      socket.emit("itemsUpdate", tempItem);
-      toast.success("Art liked successfully!");
       console.log("Art liked successfully!");
 
       // Optionally, fetch the updated number of likes
@@ -214,100 +193,106 @@ function App() {
       <ToastContainer />
       <Navbar connectWallet={connectWallet} account={account} state={state} />
       <Modal
-        title="Frame Modal"
+        title={<span className="text-gray-200 font-semibold">Art Details</span>}
         open={isModalVisible}
-        onOk={handleOk}
+        // onOk={handleOk}
         onCancel={handleCancel}
+        className="bg-gray-900 border-0 shadow-xl" // Modal container styling
+        footer={null} // Disable default footer
       >
-        <p className="text-lg font-semibold">Art ID: {id}</p>
+        <div className="p-4 bg-gray-800 rounded-lg text-white">
+          {/* Art Title */}
+          <p className="text-xl font-bold mb-2">Title: {title}</p>
 
-        {/* Buy Button */}
-        <button
-          className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300"
-          onClick={() => handleBuy(id, price)}
-        >
-          Buy
-        </button>
+          {/* Art Price */}
+          <p className="text-lg font-semibold mb-4">Price: {price} ETH</p>
 
-        {/* Bid Section */}
-        <div className="mt-4">
-          <input
-            type="text"
-            className="border border-gray-300 rounded px-4 py-2 w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Enter your bid"
-            onChange={(e) => setBid(e.target.value)}
-          />
-          <button
-            className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition duration-300 w-full"
-            onClick={() => handleBid(id, bid)}
-          >
-            Bid
-          </button>
-        </div>
+          {/* Owner Address */}
+          <p className="text-sm text-gray-400 mb-4">Owner: {owner}</p>
 
-        {/* Toggle Auction Button */}
-        {map?.items.find(item => 
-  item.name === "frame" && 
-  item.by === localStorage.getItem("address") && 
-  item.id === id
-) && (
-  <button
-    className="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600 transition duration-300 mt-4 w-full"
-    onClick={() => handleToggle(id)}
-  >
-    Toggle Auction
-  </button>
-)}
-
-        {/* <button
-          className="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600 transition duration-300 mt-4 w-full"
-          onClick={() => handleToggle(id)}
-        >
-          Toggle Auction
-        </button> */}
-
-        {/* View Bidders Button */}
-        <button
-          className="bg-purple-500 text-white font-bold py-2 px-4 rounded hover:bg-purple-700 transition duration-300 mt-4 w-full"
-          onClick={() => handleGetBidders(id)}
-        >
-          View Bidders
-        </button>
-
-        {/* View Max Bid Button */}
-        <button
-          className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 transition duration-300 mt-4 w-full"
-          onClick={() => handleGetMaxBid(id)}
-        >
-          {maxBid ? `Max Bid: ${maxBid} ETH` : "View Max Bid"}
-        </button>
-        <div className="mt-4 flex items-center space-x-2">
-          <button
-            className="flex items-center bg-pink-500 text-white font-bold py-2 px-4 rounded hover:bg-pink-700 transition duration-300"
-            onClick={() => handleLike(id)}
-          >
-            {/* Heart SVG */}
-            <svg
-              className="w-6 h-6 fill-current text-white mr-2"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
+          {/* Bid Section */}
+          <div className="mt-4 flex items-center">
+            <input
+              type="text"
+              className="border border-gray-600 bg-gray-700 text-white rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Enter your bid"
+              onChange={(e) => setBid(e.target.value)}
+            />
+            <button
+              className="ml-2 bg-gray-900 text-white font-bold py-2 px-3 rounded-md hover:bg-gray-800 transition duration-300"
+              onClick={() => handleBid(id, bid)}
             >
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-            {/* Number of likes */}
-            <span>{likes}</span>
-          </button>
+              Bid
+            </button>
+          </div>
+
+          {/* Buttons Section */}
+          <div className="mt-4 space-y-2">
+            {/* Buy Button */}
+            <button
+              className="bg-gray-900 text-white font-bold py-2 px-3 rounded-md hover:bg-gray-800 transition duration-300 w-full"
+              onClick={() => handleBuy(id, price)}
+            >
+              Buy Now
+            </button>
+
+            {/* Toggle Auction Button */}
+            <button
+              className="bg-gray-900 text-white font-bold py-2 px-3 rounded-md hover:bg-gray-800 transition duration-300 w-full"
+              onClick={() => handleToggle(id)}
+            >
+              Toggle Auction
+            </button>
+
+            {/* View Bidders Button */}
+            <button
+              className="bg-gray-900 text-white font-bold py-2 px-3 rounded-md hover:bg-gray-800 transition duration-300 w-full"
+              onClick={() => handleGetBidders(id)}
+            >
+              View Bidders
+            </button>
+
+            {/* View Max Bid Button */}
+            <button
+              className="bg-gray-900 text-white font-bold py-2 px-3 rounded-md hover:bg-gray-800 transition duration-300 w-full"
+              onClick={() => handleGetMaxBid(id)}
+            >
+              {maxBid ? `Max Bid: ${maxBid} ETH` : "View Max Bid"}
+            </button>
+          </div>
+
+          {/* Like Button */}
+          <div className="mt-4 flex items-center space-x-2">
+            <button
+              className="flex items-center bg-red-500 text-white font-bold py-2 px-3 rounded-md hover:bg-red-500 transition duration-300"
+              onClick={() => handleLike(id)}
+            >
+              {/* Heart SVG */}
+              <svg
+                className="w-5 h-5 fill-current text-white mr-1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+              <span>{likes}</span>
+            </button>
+          </div>
         </div>
 
         {/* Bidders Modal */}
         <Modal
-          title="Bidders List"
+          title={
+            <span className="text-gray-800 font-bold underline">Bidders List</span> // Keep the title light for contrast
+          }
           open={isBiddersModalVisible}
           onOk={() => setIsBiddersModalVisible(false)}
           onCancel={() => setIsBiddersModalVisible(false)}
+          className="bg-gray-800 border-0 shadow-xl" // Darker background for contrast
         >
-          <div className="text-lg font-semibold">
-            <p>Art ID: {id}</p>
+          <div className="text-black">
+            {" "}
+            <p className="text-lg font-semibold">Art ID: {id}</p>
             <p className="mt-4">List of Bidders:</p>
             <ul className="list-disc ml-4 mt-2">
               {bidders.length > 0 ? (
@@ -324,32 +309,8 @@ function App() {
         </Modal>
       </Modal>
 
-      <Modal
-        title="Bidders List"
-        open={isBiddersModalVisible}
-        onOk={() => setIsBiddersModalVisible(false)}
-        onCancel={() => setIsBiddersModalVisible(false)}
-      >
-        <div className="text-lg font-semibold">
-          <p>Art ID: {id}</p>
-          <p className="mt-4">List of Bidders:</p>
-          <ul className="list-disc ml-4 mt-2">
-            {bidders.length > 0 ? (
-              bidders.map((bidder, index) => (
-                <li key={index} className="mt-2">
-                  {bidder}
-                </li>
-              ))
-            ) : (
-              <p>No bidders found</p>
-            )}
-          </ul>
-        </div>
-      </Modal>
-
       <SocketManager />
       <Canvas shadows camera={{ position: [8, 8, 8], fov: 50 }}>
-        <Sky/>
         <StoreWalls />
         <StoreWalls2 />
         <StoreWalls3 />

@@ -226,7 +226,7 @@ export const Experience = ({ onFrameClick,contractState}) => {
               } else {
                 if (item.name == "frame") {
                   console.log(item);
-                  onFrameClick(item.id,item.price,item.likes);
+                  onFrameClick(item.id,item.price,item.likes,item.title,item.by);
                 }
               }
             }}
