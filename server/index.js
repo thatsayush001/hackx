@@ -8,7 +8,7 @@ import abi from "../client/src/abi/NFTGallery.json" assert { type: "json" }; // 
 // const http = require("http");
 import http from "http";
 
-const hostname = "127.0.0.1";
+// const hostname = "127.0.0.1";
 const port = 8080;
 
 const server = http.createServer((req, res) => {
@@ -23,8 +23,8 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+server.listen(port, () => {
+  console.log(`Server running at port = ${port}/`);
 });
 
 const io = new Server(server, {
