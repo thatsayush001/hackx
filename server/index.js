@@ -58,6 +58,18 @@ io.listen(8080);
 const characters = [];
 
 const items = {
+  squareBlock1: {
+    name: "squareBlock",
+    size: [2, 2],
+  },
+  squareBlock2: {
+    name: "squareBlock",
+    size: [2, 2],
+  },
+  squareBlock3: {
+    name: "squareBlock",
+    size: [2, 2],
+  },
   stanchion1: {
     name: "stanchion1",
     size: [1, 5],
@@ -420,6 +432,18 @@ const map = {
   size: [15, 15],
   gridDivision: 2,
   items: [
+    {
+      ...items.squareBlock1,
+      gridPosition: [21, 5],
+    },
+    {
+      ...items.squareBlock2,
+      gridPosition: [14, 22],
+    },
+    {
+      ...items.squareBlock3,
+      gridPosition: [7, 5],
+    },
     {
       ...items.stanchion1,
       gridPosition: [1, 2],
