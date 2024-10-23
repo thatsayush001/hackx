@@ -246,16 +246,19 @@ function App() {
         </div>
 
         {/* Toggle Auction Button */}
-        {map.items.map((item) => (
-        item.name === "frame" && item.by === localStorage.getItem("address") && (
-          <button
-            className="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600 transition duration-300 mt-4 w-full"
-            onClick={() => handleToggle(id)}
-          >
-            Toggle Auction
-          </button>
-        )
-      ))}
+        {map?.items.find(item => 
+  item.name === "frame" && 
+  item.by === localStorage.getItem("address") && 
+  item.id === id
+) && (
+  <button
+    className="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600 transition duration-300 mt-4 w-full"
+    onClick={() => handleToggle(id)}
+  >
+    Toggle Auction
+  </button>
+)}
+
         {/* <button
           className="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600 transition duration-300 mt-4 w-full"
           onClick={() => handleToggle(id)}
