@@ -1,4 +1,4 @@
-import { ScrollControls } from "@react-three/drei";
+import { ScrollControls, Sky } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Modal } from "antd";
 import { useAtom } from "jotai";
@@ -349,6 +349,7 @@ function App() {
 
       <SocketManager />
       <Canvas shadows camera={{ position: [8, 8, 8], fov: 50 }}>
+        <Sky/>
         <StoreWalls />
         <StoreWalls2 />
         <StoreWalls3 />
