@@ -164,15 +164,15 @@ const items = {
   },
   portraitWall: {
     name: "portraitWall",
-    size: [1, 14],
+    size: [1, 12],
   },
   portraitWall2: {
     name: "portraitWall",
-    size: [1, 14],
+    size: [1, 12],
   },
   portraitWall3: {
     name: "portraitWall",
-    size: [1, 14],
+    size: [1, 12],
   },
   frame: {
     name: "frame",
