@@ -1,14 +1,40 @@
 import pathfinding from "pathfinding";
 import { Server } from "socket.io";
+// import socketIO from "socket.io";
 import { ethers } from "ethers";
 import { JsonRpcProvider } from "ethers";
 import abi from "../client/src/abi/NFTGallery.json" assert { type: "json" }; // Ensure this path is correct
 
-const io = new Server({
+// const http = require("http");
+import http from "http";
+
+const hostname = "127.0.0.1";
+const port = 8080;
+
+const server = http.createServer((req, res) => {
+  if (req.method === "GET" && req.url === "/") {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/plain");
+    res.end("Hello, World!\n");
+  } else {
+    res.statusCode = 404;
+    res.setHeader("Content-Type", "text/plain");
+    res.end("Not Found\n");
+  }
+});
+
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+
+const io = new Server(server, {
   cors: {
     origin: "https://meta-gallery-client.vercel.app/",
   },
 });
+
+// const io = new Server({
+// });
 
 const privateKey =
   "529038177e54eb14bb591eaf0e7517112d7f4189f372f4a15a7d0229236adf7f";
@@ -35,17 +61,17 @@ const fetchAllPosts = async () => {
     const obj = {
       ...items.frame,
       gridPosition: [Number(post[8]), Number(post[9])],
-      by : post[2],
-      likes : Number(post[7]),
-      rotation : Number(post[10]),
+      by: post[2],
+      likes: Number(post[7]),
+      rotation: Number(post[10]),
       link: imgData.img,
-      title : imgData.title,
-      price : imgData.price,
-      auctionActive : post[5],
-      sold : post[6],
-      maxBidder : post[4],
-      currentBid : Number(post[3]),
-      id: Number(post[0])
+      title: imgData.title,
+      price: imgData.price,
+      auctionActive: post[5],
+      sold: post[6],
+      maxBidder: post[4],
+      currentBid: Number(post[3]),
+      id: Number(post[0]),
     };
     console.log(obj);
     map.items.push(obj);
@@ -53,7 +79,7 @@ const fetchAllPosts = async () => {
 };
 // fetchAllPosts()
 
-io.listen(8080);
+// io.listen(8080);
 
 const characters = [];
 
