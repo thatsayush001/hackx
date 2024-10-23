@@ -58,6 +58,18 @@ io.listen(8080);
 const characters = [];
 
 const items = {
+  chineseMonk: {
+    name: "chineseMonk",
+    size: [2, 2],
+  },
+  goldenRetriever: {
+    name: "goldenRetriever",
+    size: [2, 2],
+  },
+  chineseArtifact: {
+    name: "chineseArtifact",
+    size: [2, 2],
+  },
   squareBlock1: {
     name: "squareBlock",
     size: [2, 2],
@@ -432,6 +444,18 @@ const map = {
   size: [15, 15],
   gridDivision: 2,
   items: [
+    {
+      ...items.chineseMonk,
+      gridPosition: [7, 5],
+    },
+    {
+      ...items.goldenRetriever,
+      gridPosition: [14, 22],
+    },
+    {
+      ...items.chineseArtifact,
+      gridPosition: [21, 5],
+    },
     {
       ...items.squareBlock1,
       gridPosition: [21, 5],
