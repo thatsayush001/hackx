@@ -6,7 +6,7 @@ import abi from "../client/src/abi/NFTGallery.json" assert { type: "json" }; // 
 
 const io = new Server({
   cors: {
-    origin: "http://localhost:5173",
+    origin: "https://meta-gallery-client.vercel.app/",
   },
 });
 
